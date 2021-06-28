@@ -19,7 +19,12 @@ class vector
     friend vector operator*(const vector& other, int64_t n);
 public:
     vector() = default;
-    vector(size_t n) :vec_(std::vector<int64_t>(n)) {};
+
+    explicit vector(size_t n) :vec_(std::vector<int64_t>(n)) {};
+
+    explicit vector(size_t dimension, int64_t init_value) :vec_(std::vector<int64_t>(dimension, init_value)) {};
+
+
     vector(std::initializer_list<int64_t> l) {
         vec_ = std::vector<int64_t>(l);
     }
@@ -31,7 +36,7 @@ public:
     }
 
     // copy move constructor
-    vector(vector&& other) {
+    vector(vector&& other)  noexcept {
         std::cout << "move" << std::endl;
         using std::swap;
         swap(other.vec_, vec_);
@@ -61,39 +66,17 @@ public:
         return result;
     }
 
-
 private:
     std::vector<int64_t> vec_;
 };
 
-std::ostream& operator<<(std::ostream& os, const vector& vec) {
-    os << "[";
-    for(auto cit = vec.vec_.cbegin(); cit != vec.vec_.cend(); cit++) {
-        os << *cit;
-        if (cit+1 != vec.vec_.cend()) {
-            os << ",";
-        }
-    }
-    os << "]";
-    return os;
-}
 
-vector operator*(const vector& other, int64_t n) {
-    vector result(other.vec_.size());
-    for (size_t i = 0; i < other.vec_.size(); i++) {
-        result.vec_[i] = other.vec_[i] * n;
-    }
-    return result;
-}
+std::ostream& operator<<(std::ostream& os, const vector& vec);
+vector operator*(const vector& other, int64_t n);
+vector operator*(int64_t n, const vector& other);
 
-vector operator*(int64_t n, const vector& other) {
-    vector result(other.vec_.size());
-    for (size_t i = 0; i < other.vec_.size(); i++) {
-        result.vec_[i] = n * other.vec_[i];
-    }
-    return result;
-}
-
+// generate zero vector
+vector zero(size_t dimension);
 };
 
 #endif /* LINEAR_ALGEBRA_H */
